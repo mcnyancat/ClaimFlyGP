@@ -18,6 +18,7 @@ If you enable this feature, players will still be able to use the command as wel
 
 Dependancies:
 - [GriefPrevention](https://github.com/GriefPrevention)
+- [Foundation](https://github.com/kangarko/Foundation)
 
 Commands:
 - /claimfly | /cfly | /fly
