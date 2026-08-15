@@ -1,5 +1,6 @@
 package dev.shadmage.claimflygp.commands;
 
+import dev.shadmage.claimflygp.policy.FlightResult;
 import dev.shadmage.claimflygp.settings.PermissionData;
 import dev.shadmage.claimflygp.utils.FlightCheck;
 import dev.shadmage.claimflygp.utils.PlayerUtils;
@@ -20,13 +21,26 @@ public final class claimflyCommand extends SimpleCommand {
 		Player player = getPlayer();
 
 		FlightCheck flightCheck = new FlightCheck();
-		String checkResult = flightCheck.check(player);
+		FlightResult result = flightCheck.evaluate(player);
 
-		if (checkResult.equals(FlightCheck.FLIGHT_ALLOWED)) {
-			boolean newFlightStatus = !(player.getAllowFlight());
-			PlayerUtils.TogglePlayerFlight(player, newFlightStatus);
-		} else {
-			PlayerUtils.PlayerNotification(player, checkResult);
+		if ("status".equalsIgnoreCase(args.length > 0 ? args[0] : "")) {
+			PlayerUtils.PlayerNotification(player, result.getMessage());
+			return;
 		}
+
+		if (!result.isAllowed()) {
+			PlayerUtils.PlayerNotification(player, result.getMessage());
+			return;
+		}
+
+		boolean newFlightStatus;
+		if ("on".equalsIgnoreCase(args.length > 0 ? args[0] : ""))
+			newFlightStatus = true;
+		else if ("off".equalsIgnoreCase(args.length > 0 ? args[0] : ""))
+			newFlightStatus = false;
+		else
+			newFlightStatus = !(player.getAllowFlight());
+
+		PlayerUtils.TogglePlayerFlight(player, newFlightStatus);
 	}
 }

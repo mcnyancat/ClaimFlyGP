@@ -5,9 +5,11 @@ import dev.shadmage.claimflygp._external.SpigotUpdateChecker;
 import dev.shadmage.claimflygp.settings.Settings;
 import dev.shadmage.claimflygp.tasks.CheckFlyingPlayersTask;
 import org.mineacademy.fo.Common;
+import org.mineacademy.fo.model.SimpleTask;
 import org.mineacademy.fo.plugin.SimplePlugin;
 
 public class ClaimFlyGPPlugin extends SimplePlugin {
+	private SimpleTask flightCheckTask;
 
 	@Override
 	protected void onPluginStart() {
@@ -24,8 +26,31 @@ public class ClaimFlyGPPlugin extends SimplePlugin {
 		runUpdateCheck();
 
 		// If auto enable/disable flight is not enabled, run the CheckFlyingPlayersTask
+		startFlightCheckTask();
+	}
+
+	@Override
+	protected void onPluginPreReload() {
+		stopFlightCheckTask();
+	}
+
+	@Override
+	protected void onPluginStop() {
+		stopFlightCheckTask();
+	}
+
+	private void startFlightCheckTask() {
+		stopFlightCheckTask();
+
 		if(!Settings.ClaimFly.AUTO_ALLOW_FLIGHT)
-			Common.runTimer(0, 5, new CheckFlyingPlayersTask());
+			flightCheckTask = Common.runTimer(0, Math.max(1, Settings.Performance.CHECK_INTERVAL_TICKS), new CheckFlyingPlayersTask());
+	}
+
+	private void stopFlightCheckTask() {
+		if (flightCheckTask != null && !flightCheckTask.isCancelled())
+			flightCheckTask.cancel();
+
+		flightCheckTask = null;
 	}
 
 	private void setupBStats() {

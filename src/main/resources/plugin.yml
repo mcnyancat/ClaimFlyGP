@@ -6,3 +6,31 @@ api-version: 1.13
 depend: [ GriefPrevention ]
 softdepend: [ CMI, Vault, AuthMe, BanManager, BungeeChatAPI, DiscordSRV, Factions, Feudal, ItemsAdder, Essentials, LegacyFactions, Lands, LuckPerms, Multiverse-Core, MVdWPlaceholderAPI, MythicMobs, mcMMO, NashornPlus, Nicky, PlaceholderAPI, ProtocolLib, SimpleClans, Towny, TownyChat, WorldEdit ]
 website: www.dirtydogsa.co.za
+permissions:
+  claimfly.use:
+    description: Allows players to use /claimfly and fly in their own claims.
+    default: false
+  claimfly.claims.admin:
+    description: Allows players to fly in admin claims.
+    default: false
+  claimfly.claims.others:
+    description: Allows players to fly in claims where they have access trust.
+    default: false
+  claimfly.claims.unclaimed:
+    description: Allows players to fly outside claimed areas.
+    default: false
+  claimfly.claims.bypass:
+    description: Allows players to fly anywhere ClaimFlyGP is enabled.
+    default: op
+  claimfly.admin.reload:
+    description: Allows reloading ClaimFlyGP.
+    default: op
+  claimfly.admin.permissions:
+    description: Allows viewing ClaimFlyGP permission information.
+    default: op
+  claimfly.admin.status:
+    description: Allows viewing ClaimFlyGP status diagnostics.
+    default: op
+  claimfly.admin.inspect:
+    description: Allows inspecting why a player can or cannot fly.
+    default: op

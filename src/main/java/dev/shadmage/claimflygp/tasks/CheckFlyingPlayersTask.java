@@ -8,6 +8,6 @@ public class CheckFlyingPlayersTask extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		flightCheck.CheckAllPlayersForIllegalFlight();
+		flightCheck.checkAllPlayersForIllegalFlight();
 	}
 }

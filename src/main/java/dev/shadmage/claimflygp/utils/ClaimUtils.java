@@ -20,26 +20,41 @@ public class ClaimUtils {
 	}
 
 	public static boolean hasAccessTrust(Player player) {
-        Supplier<String> supplier = getClaim(player).checkPermission(player, ClaimPermission.Access, null);
+		Claim claim = getClaim(player);
+		if (claim == null)
+			return false;
+
+		Supplier<String> supplier = claim.checkPermission(player, ClaimPermission.Access, null);
 		return supplier == null;
 	}
 
 	public static boolean hasAccessTrust(Player player, Location location) {
-		Supplier<String> supplier = getClaim(location).checkPermission(player, ClaimPermission.Access, null);
+		Claim claim = getClaim(location);
+		if (claim == null)
+			return false;
+
+		Supplier<String> supplier = claim.checkPermission(player, ClaimPermission.Access, null);
 		return supplier == null;
 	}
 
 	public static boolean hasAccessTrust(Player player, @Nonnull Claim claim) {
+		if (claim == null)
+			return false;
+
 		Supplier<String> supplier = claim.checkPermission(player, ClaimPermission.Access, null);
 		return supplier == null;
 	}
 
 	public static boolean isClaimOwner(Player player) {
-		return player.getName().equals(getClaim(player).getOwnerName());
+		return isClaimOwner(player, getClaim(player));
 	}
 
 	public static boolean isClaimOwner(Player player, Location location) {
-		return player.getName().equals(getClaim(location).getOwnerName());
+		return isClaimOwner(player, getClaim(location));
+	}
+
+	public static boolean isClaimOwner(Player player, Claim claim) {
+		return claim != null && claim.getOwnerID() != null && claim.getOwnerID().equals(player.getUniqueId());
 	}
 
 	public static boolean isInClaim(Player player) {
@@ -61,7 +76,8 @@ public class ClaimUtils {
 	}
 
 	public static boolean isAnAdminClaim(Location location) {
-		return getClaim(location).isAdminClaim();
+		Claim claim = getClaim(location);
+		return claim != null && claim.isAdminClaim();
 	}
 
 }

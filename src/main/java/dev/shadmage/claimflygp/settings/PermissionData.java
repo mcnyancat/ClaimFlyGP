@@ -21,6 +21,10 @@ public class PermissionData {
 		public static final String PERMISSION_CLAIMFLY_RELOAD = "claimfly.admin.reload";
 		@Permission
 		public static final String PERMISSION_CLAIMFLY_PERMS = "claimfly.admin.permissions";
+		@Permission
+		public static final String PERMISSION_CLAIMFLY_STATUS = "claimfly.admin.status";
+		@Permission
+		public static final String PERMISSION_CLAIMFLY_INSPECT = "claimfly.admin.inspect";
 	}
 
 }

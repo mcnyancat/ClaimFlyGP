@@ -22,6 +22,12 @@ Dependancies:
 
 Commands:
 - /claimfly | /cfly | /fly
+  - /claimfly on
+  - /claimfly off
+  - /claimfly toggle
+  - /claimfly status
+- /cfadmin status
+- /cfadmin inspect <player>
 
 >[!IMPORTANT]
 > Permissions:
@@ -29,6 +35,9 @@ Commands:
 > - `claimfly.claims.admin` - allows flight in admin claims
 > - `claimfly.claims.others` - allows flight in other players claims if they have Access Trust
 > - `claimfly.claims.unclaimed` - allows flight outside of claimed areas
+> - `claimfly.claims.bypass` - allows flight anywhere ClaimFlyGP is enabled
+> - `claimfly.admin.status` - allows viewing plugin diagnostics
+> - `claimfly.admin.inspect` - allows inspecting a player's flight result
 
 Configuration:
 No additional config needed. Drop in, Set permissions and it just works.

@@ -1,62 +1,46 @@
 package dev.shadmage.claimflygp.utils;
 
+import dev.shadmage.claimflygp.policy.FlightPolicy;
+import dev.shadmage.claimflygp.policy.FlightReason;
+import dev.shadmage.claimflygp.policy.FlightResult;
 import dev.shadmage.claimflygp.settings.DebugValues;
-import dev.shadmage.claimflygp.settings.PermissionData;
 import dev.shadmage.claimflygp.settings.Settings;
 import me.ryanhamshire.GriefPrevention.Claim;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
 import org.mineacademy.fo.Common;
 import org.mineacademy.fo.remain.CompParticle;
-import org.mineacademy.fo.remain.CompPotionEffectType;
 import org.mineacademy.fo.remain.Remain;
 
 public class FlightCheck {
 	public final static String FLIGHT_ALLOWED = "allow";
+	private final FlightPolicy flightPolicy = new FlightPolicy();
 
 	public String check(Player player) {
-		if (!player.hasPermission(PermissionData.PERMISSION_CLAIMFLY_USE)) {
-			return Settings.Messages.NO_FLY;
-		}
+		FlightResult result = evaluate(player);
 
-		if(!player.hasPermission(PermissionData.PERMISSION_CLAIMFLY_BYPASS)) {
-			if(Settings.DEBUG_SECTIONS.contains(DebugValues.FLIGHTCHECK_COMMAND))
-				Common.logFramed(
-						"Owner: " + ClaimUtils.isClaimOwner(player),
-						"hasTrust: " + ClaimUtils.hasAccessTrust(player),
-						"FlyOthersPerm: " + player.hasPermission(PermissionData.PERMISSION_CLAIMFLY_OTHERS)
-				);
+		return result.isAllowed() ? FLIGHT_ALLOWED : result.getMessage();
+	}
 
-			if (ClaimUtils.isInAdminClaim(player)) { //Player is in a admin claim
-				if (!(ClaimUtils.hasAccessTrust(player) || player.hasPermission(PermissionData.PERMISSION_CLAIMFLY_ADMIN))) {
-					return Settings.Messages.NO_FLY_THIS_CLAIM.replace("%ClaimOwner%", ClaimUtils.getClaim(player).getOwnerName());
-				}
-			} else if (ClaimUtils.isInClaim(player)) { //Player is in a player claim
-				if(!ClaimUtils.isClaimOwner(player)) {
-					//Player not in their own claim
-					//Check if they have perms to fly in other player claims
-					if(!player.hasPermission(PermissionData.PERMISSION_CLAIMFLY_OTHERS)){
-						return Settings.Messages.NO_FLY_OUTSIDE_CLAIM;
-					}
-					// Check if they have trust in this claim
-					if(!ClaimUtils.hasAccessTrust(player)){
-						return Settings.Messages.NO_FLY_THIS_CLAIM.replace("%ClaimOwner%", ClaimUtils.getClaim(player).getOwnerName());
-					}
-				}
-			} else if (!player.hasPermission(PermissionData.PERMISSION_CLAIMFLY_UNCLAIMED)) { // player isnt in a claim...
-				return Settings.Messages.NO_FLY_OUTSIDE_CLAIM;
-			}
+	public FlightResult evaluate(Player player) {
+		FlightResult result = flightPolicy.evaluate(player);
+
+		if(Settings.DEBUG_SECTIONS.contains(DebugValues.FLIGHTCHECK_COMMAND))
+			Common.logFramed(
+					"Allowed: " + result.isAllowed(),
+					"Reason: " + result.getReason(),
+					"ClaimOwner: " + (result.getClaim() != null ? result.getClaim().getOwnerName() : "Unclaimed")
+			);
+
+		if (result.isAllowed() && result.getReason() != FlightReason.BYPASS && result.getReason() != FlightReason.IGNORED_GAMEMODE)
 			showFlightBoundaries(player);
-		}
 
-		return FLIGHT_ALLOWED;
+		return result;
 	}
 
 	private void showFlightBoundaries(Player player) {
 
-		if(player.getGameMode() == GameMode.SURVIVAL) {
+		if(Settings.Particles.SHOW_BOUNDARIES) {
 			Claim claimAtPlayer = ClaimUtils.getClaim(player);
 			Location playerLoc = player.getLocation();
 
@@ -68,37 +52,33 @@ public class FlightCheck {
 				locs[3] = new Location(player.getWorld(), claimAtPlayer.getGreaterBoundaryCorner().getBlockX() + .5, playerLoc.getBlockY() + 2, playerLoc.getBlockZ() + .5);
 
 				for (int i = 0; i <= 3; i++) {
-					int checkDistance = 6;
-					if (playerLoc.distance(locs[i]) <= checkDistance) {
+					if (playerLoc.distance(locs[i]) <= Settings.Particles.BOUNDARY_DISTANCE) {
 						CompParticle.COMPOSTER.spawn(player, locs[i]);
 						CompParticle.COMPOSTER.spawn(player, locs[i].subtract(0, 1, 0));
 						CompParticle.COMPOSTER.spawn(player, locs[i].add(0, 1, 0));
 					}
 				}
-
-
 			}
 		}
 	}
 
 	public void CheckAllPlayersForIllegalFlight(){
+		checkAllPlayersForIllegalFlight();
+	}
+
+	public void checkAllPlayersForIllegalFlight(){
 		Common.runLater(() ->{
 			for(Player player : Remain.getOnlinePlayers()){
 				if(player.isFlying())
-					CheckPlayerForIllegalFlight(player);
+					checkPlayerForIllegalFlight(player);
 			}
 		});
 	}
 
-	private void CheckPlayerForIllegalFlight(Player player) {
-		GameMode playerGamemode = player.getGameMode();
-		if(Settings.ClaimFly.IGNORE_CREATIVE && playerGamemode == GameMode.CREATIVE) return;
-		if(Settings.ClaimFly.IGNORE_SPECTATOR && playerGamemode == GameMode.SPECTATOR) return;
-
-		FlightCheck flightCheck = new FlightCheck();
-		String checkResult = flightCheck.check(player);
-		if (!checkResult.equals(FlightCheck.FLIGHT_ALLOWED)) {
-			player.addPotionEffect(new PotionEffect(CompPotionEffectType.SLOW_FALLING, 200, 1));
+	private void checkPlayerForIllegalFlight(Player player) {
+		FlightResult result = evaluate(player);
+		if (!result.isAllowed()) {
+			PlayerUtils.applySlowFalling(player);
 			PlayerUtils.TogglePlayerFlight(player, false);
 		}
 	}
