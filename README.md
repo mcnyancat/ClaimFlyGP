@@ -29,6 +29,17 @@ Commands:
 - /cfadmin status
 - /cfadmin inspect <player>
 
+PlaceholderAPI:
+- `%claimfly_allowed%` - returns true if the player is allowed to use claim flight at their current location
+- `%claimfly_can_fly%` - alias of `%claimfly_allowed%`
+- `%claimfly_reason%` - returns the current flight decision reason
+- `%claimfly_message%` - returns the configured message for the current flight decision
+- `%claimfly_claim_owner%` - returns the current claim owner, or Unclaimed
+- `%claimfly_claim_type%` - returns player, admin, or unclaimed
+- `%claimfly_world%` - returns the player's current world
+- `%claimfly_allow_flight%` - returns the player's current allow-flight state
+- `%claimfly_is_flying%` - returns whether the player is currently flying
+
 >[!IMPORTANT]
 > Permissions:
 > - `claimfly.use` - allows use of the command and flight in own claims
