@@ -37,7 +37,7 @@ public class SpigotUpdateChecker {
 	public void CheckForUpdates() {
 		this.getVersion(version -> {
 			String currentVersion = this.plugin.getDescription().getVersion();
-			if (!currentVersion.equals(version)) {
+			if (isNewer(version, currentVersion)) {
 				Common.logFramed("&6New update available for " + this.plugin.getName(),
 						"&7 - You are running version: &c" + currentVersion,
 						"&7 - Latest release: &a" + version,
@@ -48,5 +48,24 @@ public class SpigotUpdateChecker {
 				Common.log("&aYou are running the latest release.");
 			}
 		});
+	}
+
+	// Compares x.y.z numbers, so a build ahead of Spigot (like this fork) isn't told to "update" to an older release
+	private static boolean isNewer(String latest, String current) {
+		String[] latestParts = latest.split("\\.");
+		String[] currentParts = current.split("\\.");
+		for (int i = 0; i < Math.max(latestParts.length, currentParts.length); i++) {
+			int latestPart = i < latestParts.length ? versionPart(latestParts[i]) : 0;
+			int currentPart = i < currentParts.length ? versionPart(currentParts[i]) : 0;
+			if (latestPart != currentPart) {
+				return latestPart > currentPart;
+			}
+		}
+		return false;
+	}
+
+	private static int versionPart(String part) {
+		String digits = part.replaceAll("\\D.*", "");
+		return digits.isEmpty() ? 0 : Integer.parseInt(digits);
 	}
 }
