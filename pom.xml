@@ -7,18 +7,18 @@
     <groupId>dev.shadmage</groupId>
     <artifactId>claimflygp</artifactId>
     <name>ClaimFlyGP</name>
-    <version>2.3.0</version>
+    <version>2.2.5</version>
     <packaging>jar</packaging>
     <!-- =============================================================================================================== -->
     <properties>
         <author>shadmage</author>
         <main.class>dev.shadmage.claimflygp.ClaimFlyGPPlugin</main.class>
         <!-- =========================================================================================================== -->
-        <foundation.version>6.10.0</foundation.version>
+        <foundation.version>6.10.1</foundation.version>
         <!-- https://github.com/kangarko/Foundation/releases -->
         <mavencompiler.version>3.15.0</mavencompiler.version>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-        <mavenshade.version>3.6.0</mavenshade.version>
+        <mavenshade.version>3.6.2</mavenshade.version>
         <!-- https://repository.apache.org/content/repositories/snapshots/org/apache/maven/plugins/maven-shade-plugin/ -->
         <mavenjarplugin.version>3.5.0</mavenjarplugin.version>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
@@ -34,14 +34,11 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.helpch.at/releases/</url>
+        </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>maven-snapshots</id>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -50,10 +47,18 @@
             <version>${griefprevention.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>${foundation.path}</groupId>
             <artifactId>Foundation</artifactId>
             <version>${foundation.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.12.2</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -72,6 +77,13 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.46</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>

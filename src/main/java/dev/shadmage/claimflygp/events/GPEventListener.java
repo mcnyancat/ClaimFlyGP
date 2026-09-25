@@ -4,7 +4,6 @@ import dev.shadmage.claimflygp.utils.FlightCheck;
 import me.ryanhamshire.GriefPrevention.events.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.mineacademy.fo.Common;
 import org.mineacademy.fo.annotation.AutoRegister;
 
 @AutoRegister
@@ -13,28 +12,27 @@ public final class GPEventListener implements Listener {
 
 	@EventHandler
 	public void onClaimDelete(ClaimDeletedEvent claimDeletedEvent){
-		Common.logFramed("A claim has been deleted");
-		flightCheck.CheckAllPlayersForIllegalFlight();
+		flightCheck.checkAllPlayersForIllegalFlight();
 	}
 
 	@EventHandler
 	public void onClaimCreate(ClaimCreatedEvent claimCreatedEvent){
-		flightCheck.CheckAllPlayersForIllegalFlight();
+		flightCheck.checkAllPlayersForIllegalFlight();
 	}
 
 	@EventHandler
 	public void onClaimExtend(ClaimResizeEvent claimResizeEvent){
-		flightCheck.CheckAllPlayersForIllegalFlight();
+		flightCheck.checkAllPlayersForIllegalFlight();
 	}
 
 	@EventHandler
 	public void onClaimTransferEvent(ClaimTransferEvent claimTransferEvent){
-		flightCheck.CheckAllPlayersForIllegalFlight();
+		flightCheck.checkAllPlayersForIllegalFlight();
 	}
 
 	@EventHandler
 	public void onTrustChangedEvent(TrustChangedEvent trustChangedEvent){
-		flightCheck.CheckAllPlayersForIllegalFlight();
+		flightCheck.checkAllPlayersForIllegalFlight();
 	}
 
 

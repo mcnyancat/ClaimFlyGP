@@ -1,5 +1,6 @@
 package dev.shadmage.claimflygp.events;
 
+import dev.shadmage.claimflygp.policy.FlightResult;
 import dev.shadmage.claimflygp.settings.Settings;
 import dev.shadmage.claimflygp.utils.FlightCheck;
 import dev.shadmage.claimflygp.utils.PlayerUtils;
@@ -19,9 +20,9 @@ public final class FlightToggleListener implements Listener {
 	public void onFlightToggle(PlayerToggleFlightEvent event) {
 		Common.setTellPrefix(Settings.ClaimFly.CLAIMFLY_CHAT_PREFIX);
 		Player player = event.getPlayer();
-		String checkResult = flightCheck.check(player);
+		FlightResult result = flightCheck.evaluate(player);
 		if (event.isFlying()) {
-			if (!checkResult.equals(FlightCheck.FLIGHT_ALLOWED)) {
+			if (!result.isAllowed()) {
 				PlayerUtils.TogglePlayerFlight(player, false);
 				event.setCancelled(true);
 			}

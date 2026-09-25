@@ -17,10 +17,34 @@ ClaimFly:
   # Display messages in actionbar instead of chat
   # True = ActionBar; False = Chat
   MessageOnActionBar: true
+Rules:
+  # Leave empty to allow all worlds unless they are listed in DisabledWorlds.
+  EnabledWorlds: [ ]
+  DisabledWorlds: [ ]
+  # If true, Access Trust in admin claims can allow flight when the player also passes the normal trust check.
+  AdminClaimsAllowAccessTrust: false
+Performance:
+  # Used only when AutoAllowFlightOnEnterClaim is false.
+  # 20 ticks = 1 second. Lower values react faster but cost more on busy servers.
+  CheckFlyingPlayersIntervalTicks: 20
+Safety:
+  SlowFallingEnabled: true
+  SlowFallingTicks: 200
+  SlowFallingAmplifier: 1
+Particles:
+  ShowClaimBoundaries: true
+  BoundaryDistance: 6
 Messages:
   noFlyPerms: '&cYou do not have permission to fly on this server!'
   # Accepts %ClaimOwner% placeholder to get the current claimowners name
   noFlyThisClaim: '&cYou do not have permission to fly in this claim! Ask &6%ClaimOwner% &c for /accesstrust.'
   noFlyOutsideClaims: '&cYou cannot fly outside of claims!'
+  noFlyAdminClaim: '&cYou cannot fly in admin claims!'
+  noFlyWorld: '&cClaim flight is disabled in &6%world%&c.'
   FlightEnabled: 'Flight mode has been enabled.'
   FlightDisabled: 'Flight mode has been disabled.'
+  FlyBypass: '&aFlight allowed by bypass permission.'
+  FlyOwnClaim: '&aFlight allowed in your claim.'
+  FlyTrustedClaim: '&aFlight allowed because you are trusted in &6%ClaimOwner%&a''s claim.'
+  FlyAdminClaim: '&aFlight allowed in this admin claim.'
+  FlyUnclaimed: '&aFlight allowed in unclaimed land.'

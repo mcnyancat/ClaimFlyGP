@@ -2,12 +2,17 @@ package dev.shadmage.claimflygp;
 
 import dev.shadmage.claimflygp._external.Metrics;
 import dev.shadmage.claimflygp._external.SpigotUpdateChecker;
+import dev.shadmage.claimflygp.placeholders.ClaimFlyPlaceholderExpansion;
 import dev.shadmage.claimflygp.settings.Settings;
 import dev.shadmage.claimflygp.tasks.CheckFlyingPlayersTask;
+import org.bukkit.Bukkit;
 import org.mineacademy.fo.Common;
+import org.mineacademy.fo.model.SimpleTask;
 import org.mineacademy.fo.plugin.SimplePlugin;
 
 public class ClaimFlyGPPlugin extends SimplePlugin {
+	private SimpleTask flightCheckTask;
+	private ClaimFlyPlaceholderExpansion placeholderExpansion;
 
 	@Override
 	protected void onPluginStart() {
@@ -22,10 +27,35 @@ public class ClaimFlyGPPlugin extends SimplePlugin {
 
 		setupBStats();
 		runUpdateCheck();
+		registerPlaceholders();
 
 		// If auto enable/disable flight is not enabled, run the CheckFlyingPlayersTask
+		startFlightCheckTask();
+	}
+
+	@Override
+	protected void onPluginPreReload() {
+		stopFlightCheckTask();
+	}
+
+	@Override
+	protected void onPluginStop() {
+		stopFlightCheckTask();
+		unregisterPlaceholders();
+	}
+
+	private void startFlightCheckTask() {
+		stopFlightCheckTask();
+
 		if(!Settings.ClaimFly.AUTO_ALLOW_FLIGHT)
-			Common.runTimer(0, 5, new CheckFlyingPlayersTask());
+			flightCheckTask = Common.runTimer(0, Math.max(1, Settings.Performance.CHECK_INTERVAL_TICKS), new CheckFlyingPlayersTask());
+	}
+
+	private void stopFlightCheckTask() {
+		if (flightCheckTask != null && !flightCheckTask.isCancelled())
+			flightCheckTask.cancel();
+
+		flightCheckTask = null;
 	}
 
 	private void setupBStats() {
@@ -46,5 +76,21 @@ public class ClaimFlyGPPlugin extends SimplePlugin {
 
 	private void runUpdateCheck() {
 		SpigotUpdateChecker spigotUpdateChecker = new SpigotUpdateChecker(this, 122058);
+	}
+
+	private void registerPlaceholders() {
+		if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") || placeholderExpansion != null)
+			return;
+
+		placeholderExpansion = new ClaimFlyPlaceholderExpansion(this);
+		placeholderExpansion.register();
+		Common.log("&aRegistered PlaceholderAPI placeholders.");
+	}
+
+	private void unregisterPlaceholders() {
+		if (placeholderExpansion != null && placeholderExpansion.isRegistered())
+			placeholderExpansion.unregister();
+
+		placeholderExpansion = null;
 	}
 }

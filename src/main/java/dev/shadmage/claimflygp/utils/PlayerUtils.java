@@ -13,12 +13,17 @@ public class PlayerUtils {
 		if(player.getAllowFlight() == allowFlight) return;
 		if(!allowFlight) {
 			if(player.isFlying()) {
-				player.addPotionEffect(new PotionEffect(CompPotionEffectType.SLOW_FALLING, 200, 1));
+				applySlowFalling(player);
 				player.setFlying(false);
 			}
 		}
 		player.setAllowFlight(allowFlight);
 		PlayerNotification(player, (allowFlight ? Settings.Messages.FLIGHT_ENABLED : Settings.Messages.FLIGHT_DISABLED));
+	}
+
+	public static void applySlowFalling(Player player) {
+		if (Settings.Safety.SLOW_FALLING_ENABLED)
+			player.addPotionEffect(new PotionEffect(CompPotionEffectType.SLOW_FALLING, Settings.Safety.SLOW_FALLING_TICKS, Settings.Safety.SLOW_FALLING_AMPLIFIER));
 	}
 
 	public static void PlayerNotification(Player player, String message){
